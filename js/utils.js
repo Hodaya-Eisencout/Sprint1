@@ -10,16 +10,24 @@ function shuffleArray(array) {
     }
 }
 
-function countMinesAround(board, row, col) {
-    let count = 0
+function countMinesAround(board, rowIdx, colIdx) {
+    var minesAround = 0
 
-    for (let i = row - 1; i <= row + 1; i++) {
-        for (let j = col - 1; j <= col + 1; j++) {
-            if (i < 0 || i >= board.length ||
-                j < 0 || j >= board[i].length) continue
-            if (i === row && j === col) continue
-            if (board[i][j].isMine) count++
+    for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
+        if (i < 0 || i >= board.length) continue
+
+        for (var j = colIdx - 1; j <= colIdx + 1; j++) {
+            if (j < 0 || j >= board[0].length) continue
+            if (i === rowIdx && j === colIdx) continue
+
+            if (board[i][j].isMine) {
+                minesAround++
+            }
         }
     }
-    return count
+    return minesAround
+}
+
+function getCellId(i, j) {
+    return `cell-${i}-${j}`
 }

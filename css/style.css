@@ -1,0 +1,15 @@
+
+
+table.board {
+    border-collapse: collapse;
+}
+
+table.board td {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #333;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 20px;
+    cursor: pointer;
+}

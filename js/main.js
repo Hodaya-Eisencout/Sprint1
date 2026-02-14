@@ -36,7 +36,7 @@ function buildBoard() {
 }
 
 
-function placeMines(board, minesCount) {
+function placeMines(board, totalMines) {
 
     const emptyCells = []
     for (var i = 0; i < board.length; i++) {
@@ -49,11 +49,11 @@ function placeMines(board, minesCount) {
 
     console.log('emptyCells after shuff: ', emptyCells)
 
-    for (var i = 0; i < minesCount; i++) {
+    for (var i = 0; i < totalMines; i++) {
         const cellPos = emptyCells[i]
 
         console.log('cellPos: ', cellPos)
-        
+
         board[cellPos.i][cellPos.j].isMine = true
     }
 }
@@ -61,3 +61,76 @@ function placeMines(board, minesCount) {
 gBoard = buildBoard()
 console.table(gBoard)
 console.log(gBoard)
+
+function renderBoard(board) {
+    var strHTML = ''
+
+    for (var i = 0; i < board.length; i++) {
+        strHTML += '<tr>'
+        for (var j = 0; j < board[i].length; j++) {
+            const cell = board[i][j]
+
+            const cellId = getCellId(i, j)
+
+            strHTML += `<td id= "${cellId}" class="cell"
+                        onclick="cellClicked(${i},${j})">
+                        </td>`
+        }
+        strHTML += `</tr>`
+    }
+    const elBoard = document.querySelector('.board')
+    elBoard.innerHTML = strHTML
+}
+
+renderBoard(gBoard)
+console.clear()
+console.table(gBoard)
+
+function cellClicked(i, j) {
+
+    const cell = gBoard[i][j]
+    const cellId = getCellId(i, j)
+
+    if (cell.isMine) {
+        document.getElementById(cellId).innerText = '💣'
+        alert('boom, game over!')
+        return
+    }
+
+    if (cell.minesAroundCount === 0) {
+        expandShown(gBoard, i, j)
+    } else {
+        cell.isShown = true
+        document.getElementById(cellId).innerHTML = cell.minesAroundCount 
+   }
+}
+console.table(gBoard)
+
+
+function expandShown(board, rowIdx, colIdx) {
+
+    const cell = board[rowIdx][colIdx]
+    if (cell.isShown || cell.isMarked) return
+
+    cell.isShown = true
+    const cellId = getCellId(rowIdx, colIdx)
+    
+    if (cell.minesAroundCount === 0) {
+        document.getElementById(cellId).innerHTML = ''
+    } else {
+        document.getElementById(cellId).innerHTML = cell.minesAroundCount
+    }
+
+    if (cell.minesAroundCount === 0) {
+        for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
+            if (i < 0 || i >= board.length) continue
+            for (var j = colIdx - 1; j < + colIdx + 1; j++) {
+                if (j < 0 || j > + board[i].length) continue
+                if (i === rowIdx && j === colIdx) continue
+
+                expandShown(board, i, j)
+            }
+        }
+    }
+}
+
