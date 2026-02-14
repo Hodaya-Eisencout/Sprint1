@@ -1,7 +1,7 @@
 
 
-const SIZE = 8
-const MINES = 14
+const SIZE = 4
+const MINES = 2
 var gBoard
 var gGame = {
     showCount: 0,
@@ -73,7 +73,8 @@ function renderBoard(board) {
             const cellId = getCellId(i, j)
 
             strHTML += `<td id= "${cellId}" class="cell"
-                        onclick="cellClicked(${i},${j})">
+                        onclick="cellClicked(${i},${j})"
+                        oncontextmenu="onCellMarked(event, ${i},${j})">
                         </td>`
         }
         strHTML += `</tr>`
@@ -134,3 +135,41 @@ function expandShown(board, rowIdx, colIdx) {
     }
 }
 
+function onCellMarked(event, i, j) {
+    event.preventDefault()
+
+    const cell = gBoard[i][j]
+    const cellId = getCellId(i, j)
+
+    if(cell.isShown) return
+
+    cell.isMarked = !cell.isMarked
+
+    if(cell.isMarked){
+        gGame.markedCount++
+    } else {
+        gGame.markedCount--
+    }
+
+    checkGameOver()
+    
+    document.getElementById(cellId).innerHTML = cell.isMarked ? '🚩' : ''
+
+    console.log('Marked cell: ', i, j, 'isMarked: ', cell.isMarked)
+    console.log('Total marked flags: ', gGame.markedCount)
+}
+
+function checkGameOver(){
+
+    for(var i= 0; i< SIZE; i++){
+        for(var j= 0; j< SIZE; j++){
+            const cell = gBoard[i][j]
+
+            if((cell.isMine && !cell.isMarked) || 
+                (!cell.isMine && !cell.isShown)){
+                    return false
+            }
+        }          
+    }
+    return true
+}

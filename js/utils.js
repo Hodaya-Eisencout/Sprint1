@@ -31,3 +31,4 @@ function countMinesAround(board, rowIdx, colIdx) {
 function getCellId(i, j) {
     return `cell-${i}-${j}`
 }
+
