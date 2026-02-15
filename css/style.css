@@ -1,22 +1,67 @@
-
+body {
+    background: linear-gradient(135deg, #0f766e, #14b8a6);
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    color: rgb(57, 56, 56);
+    margin: 0;
+    padding: 20px;
+}
 
 table.board {
     border-collapse: collapse;
+    margin: 0 auto;
+    border: #0d9488;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+
 }
 
 table.board td {
-    width: 30px;
-    height: 30px;
-    border: 1px solid #333;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #065f46;
     text-align: center;
     vertical-align: middle;
     font-size: 20px;
     cursor: pointer;
+    background-color: #5eead4;
+    transition: 0.2s;
 }
 
-footer{
-    text-align:  center;
-    margin-top: 20px;
+table.board td:hover{
+    background-color: #2dd4bf;
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
     font-size: 14px;
-    color:  #555;
+    color: #363535;
+}
+
+.levels {
+    margin-bottom: 20px;
+}
+
+.levels button {
+    padding: 8px 16px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 20px;
+    border: none;
+    background-color: #047857;
+    color: white;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.levels button:hover {
+    background-color: #065f46;
+    transform: scale(1.05);
+}
+
+table.board td.revealed {
+    background-color: #4cbf9e;
+    color: rgb(57, 56, 56);
 }

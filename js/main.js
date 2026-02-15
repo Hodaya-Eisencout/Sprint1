@@ -13,6 +13,12 @@ var gGame = {
     secsPassed: 0
 }
 
+function setLevel(size, mines){
+    gLevel.SIZE = size
+    gLevel.MINES = mines
+    onInit()
+}
+
 function onInit() {
 
     gGame.isOn = true
@@ -86,7 +92,7 @@ function renderBoard(board) {
 
             const cellId = getCellId(i, j)
 
-            strHTML += `<td id= "${cellId}" class="cell"
+            strHTML += `<td id="${cellId}" class="cell"
                         onclick="cellClicked(${i},${j})"
                         oncontextmenu="onCellMarked(event, ${i},${j})">
                         </td>`
@@ -127,7 +133,11 @@ function cellClicked(i, j) {
     } else {
         cell.isRevealed = true
         gGame.revealedCount++
-        document.getElementById(cellId).innerHTML = cell.minesAroundCount
+
+        const elCell = document.getElementById(cellId)
+        elCell.classList.add('revealed')
+
+        elCell.innerHTML = cell.minesAroundCount
     }
     checkGameOver()
 }
@@ -143,11 +153,14 @@ function expandShown(board, rowIdx, colIdx) {
     gGame.revealedCount++
 
     const cellId = getCellId(rowIdx, colIdx)
+    const elCell = document.getElementById(cellId)
+
+    elCell.classList.add('revealed')
 
     if (cell.minesAroundCount === 0) {
-        document.getElementById(cellId).innerHTML = ''
+        elCell.innerHTML = ''
     } else {
-        document.getElementById(cellId).innerHTML = cell.minesAroundCount
+        elCell.innerHTML = cell.minesAroundCount
     }
 
     if (cell.minesAroundCount === 0) {
@@ -208,7 +221,10 @@ function revealAllMines() {
 
             if (cell.isMine) {
                 const cellId = getCellId(i, j)
-                document.getElementById(cellId).innerHTML = '💣'
+                const elCell = document.getElementById(cellId)
+
+                elCell.classList.add('revealed')
+                elCell.innerHTML = '💣'
             }
         }
     }
