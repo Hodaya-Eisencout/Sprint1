@@ -21,6 +21,7 @@ function countMinesAround(board, rowIdx, colIdx) {
             if (i === rowIdx && j === colIdx) continue
 
             if (board[i][j].isMine) {
+                
                 minesAround++
             }
         }

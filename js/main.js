@@ -1,66 +1,81 @@
 
-
-const SIZE = 4
-const MINES = 2
-var gBoard
-var gGame = {
-    showCount: 0,
-    markedCount: 0
+var gLevel = {
+    SIZE: 8,
+    MINES: 14
 }
 
+var gBoard
+
+var gGame = {
+    isOn: false,
+    revealedCount: 0,
+    markedCount: 0,
+    secsPassed: 0
+}
+
+function onInit() {
+
+    gGame.isOn = true
+    gGame.revealedCount = 0
+    gGame.markedCount = 0
+    gGame.secsPassed = 0
+
+    gBoard = buildBoard()
+    renderBoard(gBoard)
+}
 
 function buildBoard() {
     const board = []
 
-    for (var i = 0; i < SIZE; i++) {
+    for (var i = 0; i < gLevel.SIZE; i++) {
         board[i] = []
-        for (var j = 0; j < SIZE; j++) {
+        for (var j = 0; j < gLevel.SIZE; j++) {
             board[i][j] = {
-                isMine: false,
                 minesAroundCount: 0,
-                isShown: false,
+                isMine: false,
+                isRevealed: false,
                 isMarked: false
             }
             console.log('board[i][j]:', board[i][j])
         }
     }
-    placeMines(board, MINES)
-
-    for (var i = 0; i < SIZE; i++) {
-        for (var j = 0; j < SIZE; j++)
-            if (!board[i][j].isMine) {
-                board[i][j].minesAroundCount = countMinesAround(board, i, j)
-            }
-    }
     return board
 }
 
 
-function placeMines(board, totalMines) {
+function placeMines(board, totalMines, firstI, firstJ) {
 
     const emptyCells = []
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board[i].length; j++) {
+
+            if (i === firstI && j === firstJ) continue
+
             emptyCells.push({ i, j })
         }
     }
-    console.log('emptyCells : ', emptyCells)
+
     shuffleArray(emptyCells)
 
     console.log('emptyCells after shuff: ', emptyCells)
 
     for (var i = 0; i < totalMines; i++) {
         const cellPos = emptyCells[i]
-
         console.log('cellPos: ', cellPos)
-
         board[cellPos.i][cellPos.j].isMine = true
     }
 }
 
-gBoard = buildBoard()
-console.table(gBoard)
-console.log(gBoard)
+function setMinesNegsCount(board) {
+    for (var i = 0; i < board.length; i++) {
+        for (var j = 0; j < board[i].length; j++) {
+            const cell = board[i][j]
+            if (!cell.isMine) {
+                cell.minesAroundCount = countMinesAround(board, i, j)
+            }
+        }
+    }
+}
 
 function renderBoard(board) {
     var strHTML = ''
@@ -68,7 +83,6 @@ function renderBoard(board) {
     for (var i = 0; i < board.length; i++) {
         strHTML += '<tr>'
         for (var j = 0; j < board[i].length; j++) {
-            const cell = board[i][j]
 
             const cellId = getCellId(i, j)
 
@@ -83,17 +97,27 @@ function renderBoard(board) {
     elBoard.innerHTML = strHTML
 }
 
-renderBoard(gBoard)
+
 console.clear()
 console.table(gBoard)
 
 function cellClicked(i, j) {
 
+    if (!gGame.isOn) return
+
     const cell = gBoard[i][j]
     const cellId = getCellId(i, j)
 
+    if (cell.isRevealed || cell.isMarked) return
+
+    if (gGame.revealedCount === 0) {
+        placeMines(gBoard, gLevel.MINES, i, j)
+        setMinesNegsCount(gBoard)
+    }
+
     if (cell.isMine) {
-        document.getElementById(cellId).innerText = '💣'
+        revealAllMines()
+        gGame.isOn = false
         alert('boom, game over!')
         return
     }
@@ -101,9 +125,11 @@ function cellClicked(i, j) {
     if (cell.minesAroundCount === 0) {
         expandShown(gBoard, i, j)
     } else {
-        cell.isShown = true
-        document.getElementById(cellId).innerHTML = cell.minesAroundCount 
-   }
+        cell.isRevealed = true
+        gGame.revealedCount++
+        document.getElementById(cellId).innerHTML = cell.minesAroundCount
+    }
+    checkGameOver()
 }
 console.table(gBoard)
 
@@ -111,11 +137,13 @@ console.table(gBoard)
 function expandShown(board, rowIdx, colIdx) {
 
     const cell = board[rowIdx][colIdx]
-    if (cell.isShown || cell.isMarked) return
+    if (cell.isRevealed || cell.isMarked) return
 
-    cell.isShown = true
+    cell.isRevealed = true
+    gGame.revealedCount++
+
     const cellId = getCellId(rowIdx, colIdx)
-    
+
     if (cell.minesAroundCount === 0) {
         document.getElementById(cellId).innerHTML = ''
     } else {
@@ -125,8 +153,8 @@ function expandShown(board, rowIdx, colIdx) {
     if (cell.minesAroundCount === 0) {
         for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
             if (i < 0 || i >= board.length) continue
-            for (var j = colIdx - 1; j < + colIdx + 1; j++) {
-                if (j < 0 || j > + board[i].length) continue
+            for (var j = colIdx - 1; j <= colIdx + 1; j++) {
+                if (j < 0 || j >= board[i].length) continue
                 if (i === rowIdx && j === colIdx) continue
 
                 expandShown(board, i, j)
@@ -136,40 +164,52 @@ function expandShown(board, rowIdx, colIdx) {
 }
 
 function onCellMarked(event, i, j) {
+
+    if (!gGame.isOn) return
+
     event.preventDefault()
 
     const cell = gBoard[i][j]
     const cellId = getCellId(i, j)
 
-    if(cell.isShown) return
+    if (cell.isRevealed) return
 
     cell.isMarked = !cell.isMarked
 
-    if(cell.isMarked){
+    if (cell.isMarked) {
         gGame.markedCount++
     } else {
         gGame.markedCount--
-    }
 
-    checkGameOver()
-    
+    }
     document.getElementById(cellId).innerHTML = cell.isMarked ? '🚩' : ''
+    checkGameOver()
 
     console.log('Marked cell: ', i, j, 'isMarked: ', cell.isMarked)
     console.log('Total marked flags: ', gGame.markedCount)
 }
 
-function checkGameOver(){
+function checkGameOver() {
 
-    for(var i= 0; i< SIZE; i++){
-        for(var j= 0; j< SIZE; j++){
+    const totalCells = gLevel.SIZE * gLevel.SIZE
+    const safeCells = totalCells - gLevel.MINES
+
+    if (gGame.revealedCount === safeCells && 
+        gGame.markedCount === gLevel.MINES) {
+        gGame.isOn = false
+        alert('Victory!')
+    }
+}
+
+function revealAllMines() {
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[i].length; j++) {
             const cell = gBoard[i][j]
 
-            if((cell.isMine && !cell.isMarked) || 
-                (!cell.isMine && !cell.isShown)){
-                    return false
+            if (cell.isMine) {
+                const cellId = getCellId(i, j)
+                document.getElementById(cellId).innerHTML = '💣'
             }
-        }          
+        }
     }
-    return true
 }
