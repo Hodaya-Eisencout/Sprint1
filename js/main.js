@@ -13,7 +13,7 @@ var gGame = {
     secsPassed: 0
 }
 
-function setLevel(size, mines){
+function setLevel(size, mines) {
     gLevel.SIZE = size
     gLevel.MINES = mines
     onInit()
@@ -99,6 +99,7 @@ function renderBoard(board) {
         }
         strHTML += `</tr>`
     }
+    console.log(strHTML)
     const elBoard = document.querySelector('.board')
     elBoard.innerHTML = strHTML
 }
@@ -207,12 +208,20 @@ function checkGameOver() {
     const totalCells = gLevel.SIZE * gLevel.SIZE
     const safeCells = totalCells - gLevel.MINES
 
-    if (gGame.revealedCount === safeCells && 
-        gGame.markedCount === gLevel.MINES) {
-        gGame.isOn = false
-        alert('Victory!')
+    if (gGame.revealedCount !== safeCells) return
+
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[i].length; j++) {
+
+            const cell = gBoard[i][j]
+            if (cell.isMine && !cell.isMarked) return
+        }
     }
+
+    gGame.isOn = false
+    alert('Victory!')
 }
+
 
 function revealAllMines() {
     for (var i = 0; i < gBoard.length; i++) {
