@@ -13,6 +13,8 @@ var gGame = {
     secsPassed: 0
 }
 
+var gLives = 3
+
 function setLevel(size, mines) {
     gLevel.SIZE = size
     gLevel.MINES = mines
@@ -25,6 +27,8 @@ function onInit() {
     gGame.revealedCount = 0
     gGame.markedCount = 0
     gGame.secsPassed = 0
+
+    document.getElementById('smiley').innerText = '😃'
 
     gBoard = buildBoard()
     renderBoard(gBoard)
@@ -123,12 +127,19 @@ function cellClicked(i, j) {
     }
 
     if (cell.isMine) {
-        revealAllMines()
-        gGame.isOn = false
-        alert('boom, game over!')
-        return
-    }
+        gLives--
 
+        if (gLives === 0) {
+            revealAllMines()
+            gGame.isOn = false
+            document.getElementById('smiley').innerText = '🤯'
+            alert('boom, game over!')
+            return
+        } else {
+            alert('Oops! You lost a life. Live left: ', gLevel)
+            return
+        }
+    }
     if (cell.minesAroundCount === 0) {
         expandShown(gBoard, i, j)
     } else {
@@ -219,6 +230,7 @@ function checkGameOver() {
     }
 
     gGame.isOn = false
+    document.getElementById('smiley').innerText = '😎'
     alert('Victory!')
 }
 
