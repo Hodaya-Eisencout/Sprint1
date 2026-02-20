@@ -10,11 +10,34 @@
 
 <body onload="onInit()">
 
-    <div class="levels">
+    <div class="smiley-container">
         <button id="smiley" onclick="onInit()">😃</button>
+    </div>
+
+    <div class="levels">
         <button onclick="setLevel(4,2)">Beginner</button>
         <button onclick="setLevel(8,14)">Medium</button>
         <button onclick="setLevel(12,32)">Expert</button>
+    </div>
+
+    <div id="timer">Time: 0s</div>
+
+    <div id="best-score">Best: 0s</div>
+
+    <div class="live-container">
+        <span id="life1">❤️</span>
+        <span id="life2">❤️</span>
+        <span id="life3">❤️</span>
+    </div>
+
+    <div class="hints-container">
+        <span class="hint" onclick="useHint(0)">🌟</span>
+        <span class="hint" onclick="useHint(1)">🌟</span>
+        <span class="hint" onclick="useHint(2)">🌟</span>
+    </div>
+
+    <div class="safe-click-container">
+        <button id="safe-click-btn" onclick="useSafeClick()">🛡️ Safe Click</button>
     </div>
 
     <table class="board"></table>
@@ -25,7 +48,7 @@
 
     <script src="js/utils.js"></script>
     <script src="js/main.js"></script>
+
 </body>
 
 </html>
-

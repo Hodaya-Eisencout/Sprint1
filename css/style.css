@@ -29,7 +29,7 @@ table.board td {
     transition: 0.2s;
 }
 
-table.board td:hover{
+table.board td:hover {
     background-color: #2dd4bf;
 }
 
@@ -65,3 +65,68 @@ table.board td.revealed {
     background-color: #4cbf9e;
     color: rgb(57, 56, 56);
 }
+
+.live-container {
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+.safe-click-reveal {
+    background-color: rgb(2, 82, 50) !important;
+    transition: 0.3s;
+}
+
+#safe-click-btn {
+    background-color: #98f5e1;
+    color: #064e3b;
+    border: none;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+#safe-click-btn:hover {
+    background-color: #6ee7b7;
+    transform: scale(1.05);
+}
+
+#safe-click-btn:active {
+    transform: scale(0.97);
+}
+
+.safe-click-container {
+    margin-bottom: 20px; 
+}
+
+#timer,
+#best-score {
+    display: block;     
+    color: #363535;
+    font-weight: bold;
+    font-size: 16px;
+    
+}
+
+.smiley-container {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+#smiley {
+    font-size: 28px;
+    padding: 8px 14px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background-color: #d1fae5;
+    transition: 0.2s ease;
+}
+
+#smiley:hover {
+    transform: scale(1.1);
+    background-color: #a7f3d0;
+}
+
